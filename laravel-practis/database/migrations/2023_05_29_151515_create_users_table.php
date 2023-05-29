@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('section_user', function (Blueprint $table) {
-            $table->id();
-            $table->foreignIdFor(\App\Models\Section::class)->constrained();
-            $table->foreignIdFor(\App\Models\User::class)->constrained();
+        Schema::table('users', function (Blueprint $table) {
+            $table->enum('role', ['admin', 'user'])->default('user')->comment('権限');
         });
     }
 
@@ -23,8 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role');
-        });
+        Schema::dropIfExists('users');
     }
 };
