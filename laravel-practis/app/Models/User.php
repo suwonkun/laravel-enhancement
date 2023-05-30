@@ -24,6 +24,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string|null $remember_token リメンバートークン
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $role 権限
  * @property-read \App\Models\Company|null $company
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
@@ -31,27 +32,30 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read int|null $sections_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
- *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
- * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|User query()
- * @method static Builder|User serchCompany(\Illuminate\Http\Request $request)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereCompanyId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereEmailVerifiedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
- *
+ * @method static Builder|User newModelQuery()
+ * @method static Builder|User newQuery()
+ * @method static Builder|User query()
+ * @method static Builder|User searchCompany(\Illuminate\Http\Request $request)
+ * @method static Builder|User whenIsNotAdmin(\Illuminate\Http\Request $request)
+ * @method static Builder|User whereCompanyId($value)
+ * @method static Builder|User whereCreatedAt($value)
+ * @method static Builder|User whereEmail($value)
+ * @method static Builder|User whereEmailVerifiedAt($value)
+ * @method static Builder|User whereId($value)
+ * @method static Builder|User whereName($value)
+ * @method static Builder|User wherePassword($value)
+ * @method static Builder|User whereRememberToken($value)
+ * @method static Builder|User whereRole($value)
+ * @method static Builder|User whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    const ROLE_ADMIN = 'admin';
+    const ROLE_USER = 'user';
 
     /**
      * The attributes that are mass assignable.
@@ -64,9 +68,6 @@ class User extends Authenticatable
         'password',
         'role',
     ];
-
-    const ROLE_ADMIN = 'admin';
-    const ROLE_USER = 'user';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -87,12 +88,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function scopeSeachCompany(Builder $builder, Request $request)
+    public function scopeSearchCompany(Builder $builder, Request $request)
     {
         return $builder->when($request->search, function ($query, $search) {
             return $query->whereHas('company', function ($query) use ($search) {
                 $query->where('name', 'like', '%' . $search . '%');
             });
+        });
+    }
+
+    public function scopeWhenIsNotAdmin(Builder $builder, Request $request)
+    {
+        return $builder->when(!$request->user()->isAdmin(), function (Builder $query) use ($request) {
+            $query->where('company_id', $request->user()->company_id);
         });
     }
 

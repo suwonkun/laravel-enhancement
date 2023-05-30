@@ -3,24 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny', $request->user());
+        $this->authorize('viewAny',User::class);
 
-        if($request->user()->role === 'admin'){
-            $users = User::query()
-                ->with(['company', 'sections'])
-                ->seachCompany($request)
-                ->simplePaginate()
-                ->withQueryString();
+        $users = User::query()
+            ->with(['company', 'sections'])
+            ->whenIsNotAdmin($request)
+            ->searchCompany($request)
+            ->simplePaginate()
+            ->withQueryString();
 
         return view('users.index', compact('users'));
-        }else{
-
-        }
     }
 }
