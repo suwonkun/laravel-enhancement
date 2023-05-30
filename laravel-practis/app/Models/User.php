@@ -37,6 +37,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static Builder|User newQuery()
  * @method static Builder|User query()
  * @method static Builder|User searchCompany(\Illuminate\Http\Request $request)
+ * @method static Builder|User searchSection(\Illuminate\Http\Request $request)
+ * @method static Builder|User searchUser($request)
  * @method static Builder|User whenIsNotAdmin(\Illuminate\Http\Request $request)
  * @method static Builder|User whereCompanyId($value)
  * @method static Builder|User whereCreatedAt($value)
@@ -105,6 +107,14 @@ class User extends Authenticatable
             });
         });
     }
+
+    public function scopeSearchUser($query, $request)
+    {
+        return $query->when($request->has('search') && $request->filled('search_user'), function ($query) use ($request) {
+            return $query->where('name', 'like', '%' . $request->search . '%');
+        });
+    }
+
 
     public function scopeWhenIsNotAdmin(Builder $builder, Request $request)
     {
