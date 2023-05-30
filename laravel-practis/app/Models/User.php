@@ -97,6 +97,15 @@ class User extends Authenticatable
         });
     }
 
+    public function scopeSearchSection(Builder $builder, Request $request)
+    {
+        return $builder->when($request->search, function ($query, $search) {
+            return $query->whereHas('sections', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            });
+        });
+    }
+
     public function scopeWhenIsNotAdmin(Builder $builder, Request $request)
     {
         return $builder->when(!$request->user()->isAdmin(), function (Builder $query) use ($request) {

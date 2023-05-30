@@ -15,7 +15,14 @@ class UserController extends Controller
         $users = User::query()
             ->with(['company', 'sections'])
             ->whenIsNotAdmin($request)
-            ->searchCompany($request)
+            ->when($request->has('search_company'), function ($query) use ($request) {
+                // searchCompanyメソッドを適用
+                return $query->searchCompany($request);
+            })
+            ->when($request->has('search_section'), function ($query) use ($request) {
+                // searchSectionメソッドを適用
+                return $query->searchSection($request);
+            })
             ->simplePaginate()
             ->withQueryString();
 
