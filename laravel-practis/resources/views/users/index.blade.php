@@ -1,3 +1,12 @@
+<form action="{{ route('users.index') }}" method="GET">
+    <div class="form-group d-flex align-items-center">
+        <label for="search" class="mr-2">検索:</label>
+        <input type="text" name="search" id="search" value="{{ request('search') }}" class="form-control">
+        <button type="submit" class="btn btn-primary ml-2">検索</button>
+    </div>
+</form>
+
+
 <table>
     <thead>
     <tr>

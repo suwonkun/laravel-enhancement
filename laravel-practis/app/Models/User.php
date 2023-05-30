@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -34,6 +36,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
+ * @method static Builder|User serchCompany(\Illuminate\Http\Request $request)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCompanyId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
@@ -59,7 +62,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+
+    const ROLE_ADMIN = 'admin';
+    const ROLE_USER = 'user';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -79,6 +86,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function scopeSeachCompany(Builder $builder, Request $request)
+    {
+        return $builder->when($request->search, function ($query, $search) {
+            return $query->whereHas('company', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            });
+        });
+    }
+
 
     public function company(): BelongsTo
     {

@@ -7,9 +7,19 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::paginate(10);
+        if($request->user()->role === 'admin'){
+            $users = User::query()
+                ->with(['company', 'sections'])
+                ->seachCompany($request)
+                ->searchSection($request)
+                ->simplePaginate()
+                ->withQueryString();
+
         return view('users.index', compact('users'));
+        }else{
+
+        }
     }
 }
