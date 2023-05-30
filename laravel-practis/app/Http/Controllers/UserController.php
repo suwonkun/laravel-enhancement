@@ -9,11 +9,12 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('viewAny', $request->user());
+
         if($request->user()->role === 'admin'){
             $users = User::query()
                 ->with(['company', 'sections'])
                 ->seachCompany($request)
-                ->searchSection($request)
                 ->simplePaginate()
                 ->withQueryString();
 

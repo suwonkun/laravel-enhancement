@@ -96,6 +96,11 @@ class User extends Authenticatable
         });
     }
 
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
 
     public function company(): BelongsTo
     {
