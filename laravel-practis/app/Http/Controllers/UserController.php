@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('viewAny',User::class);
+        $this->authorize('viewAny', [User::class, $request->user()->company]);
 
         $users = User::query()
             ->with(['company', 'sections'])
