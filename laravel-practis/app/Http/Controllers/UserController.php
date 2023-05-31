@@ -35,40 +35,36 @@ class UserController extends Controller
     public function postCSV(Request $request)
     {
         $fileName = Carbon::now()->format('YmdHis') . '_userList.csv';
+        $filePath = storage_path('app/csv/' . $fileName);
 
-        $callback = function () use ($request) {
-            $stream = fopen('php://output', 'w');
-            $head = ['ユーザー名', '会社名', '部署名'];
-            mb_convert_variables('SJIS-WIN', 'UTF-8', $head);
-            fputcsv($stream, $head);
+        $stream = fopen($filePath, 'w');
+        $head = ['ユーザー名', '会社名', '部署名'];
+        fputcsv($stream, $head);
 
-            $users = User::query()
-                ->with(['company', 'sections'])
-                ->whenIsNotAdmin($request)
-                ->when($request->has('search_company'), function ($query) use ($request) {
-                    return $query->searchCompany($request);
-                })
-                ->when($request->has('search_section'), function ($query) use ($request) {
-                    return $query->searchSection($request);
-                })
-                ->when($request->has('search_user'), function ($query) use ($request) {
-                    return $query->searchUser($request);
-                })
-                ->simplePaginate();
+        $users = User::query()
+            ->with(['company', 'sections'])
+            ->whenIsNotAdmin($request)
+            ->when($request->has('search_company'), function ($query) use ($request) {
+                return $query->searchCompany($request);
+            })
+            ->when($request->has('search_section'), function ($query) use ($request) {
+                return $query->searchSection($request);
+            })
+            ->when($request->has('search_user'), function ($query) use ($request) {
+                return $query->searchUser($request);
+            })
+            ->simplePaginate();
 
-            foreach ($users as $user) {
-                $data = [
-                    $user->name,
-                    $user->company->name,
-                    $user->sections->implode('name', ',')
-                ];
+        foreach ($users as $user) {
+            $data = [
+                $user->name,
+                $user->company->name,
+                $user->sections->implode('name', ',')
+            ];
+            fputcsv($stream, $data);
+        }
 
-                mb_convert_variables('SJIS-WIN', 'UTF-8', $data);
-                fputcsv($stream, $data);
-            }
-
-            fclose($stream);
-        };
+        fclose($stream);
 
         CsvExportHistory::create([
             'user_id' => $request->user()->id,
@@ -77,7 +73,8 @@ class UserController extends Controller
             'updated_at' => Carbon::now(),
         ]);
 
-        return response()->streamDownload($callback, $fileName);
+        return response()->download($filePath, $fileName);
     }
+
 
 }
