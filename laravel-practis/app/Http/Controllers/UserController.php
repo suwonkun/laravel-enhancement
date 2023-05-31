@@ -35,7 +35,7 @@ class UserController extends Controller
         $callback = function () use ($request) {
             $stream = fopen('php://output', 'w');
             $head = ['ユーザー名', '会社名', '部署名'];
-            mb_convert_variables('SJIS', 'UTF-8', $head);
+            mb_convert_variables('SJIS-WIN', 'UTF-8', $head);
             fputcsv($stream, $head);
 
             $users = User::query()
@@ -56,10 +56,10 @@ class UserController extends Controller
                 $data = [
                     $user->name,
                     $user->company->name,
-                    implode(',', $user->sections->pluck('name')->toArray())
+                    $user->sections->implode('name', ',')
                 ];
 
-                mb_convert_variables('SJIS', 'UTF-8', $data);
+                mb_convert_variables('SJIS-WIN', 'UTF-8', $data);
                 fputcsv($stream, $data);
             }
 
