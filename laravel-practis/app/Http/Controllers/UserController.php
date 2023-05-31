@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CsvExportHistory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -32,6 +34,8 @@ class UserController extends Controller
 
     public function postCSV(Request $request)
     {
+        $fileName = Carbon::now()->format('YmdHis') . '_userList.csv';
+
         $callback = function () use ($request) {
             $stream = fopen('php://output', 'w');
             $head = ['ユーザー名', '会社名', '部署名'];
@@ -66,6 +70,14 @@ class UserController extends Controller
             fclose($stream);
         };
 
-        return response()->streamDownload($callback, 'users.csv');
+        CsvExportHistory::create([
+            'user_id' => $request->user()->id,
+            'file_name' => $fileName,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        return response()->streamDownload($callback, $fileName);
     }
+
 }
