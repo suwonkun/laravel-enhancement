@@ -76,6 +76,4 @@ class UserController extends Controller
 
         return response()->download($filePath, $fileName);
     }
-
-
 }
