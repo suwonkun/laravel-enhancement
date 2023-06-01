@@ -69,6 +69,7 @@ class UserController extends Controller
         CsvExportHistory::create([
             'user_id' => $request->user()->id,
             'file_name' => $fileName,
+            'file_path' => $filePath,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);

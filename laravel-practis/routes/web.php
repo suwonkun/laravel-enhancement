@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CsvExportHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('companies', \App\Http\Controllers\CompanyController::class);
     Route::resource('companies.sections', \App\Http\Controllers\SectionController::class);
     Route::resource('sections.users', \App\Http\Controllers\SectionUserController::class)->only(['store', 'destroy']);
+
+    Route::get('/csvExportHistories', [CsvExportHistoryController::class, 'index'])->name('csvExportHistories.index');
+
 });
 
 require __DIR__ . '/auth.php';
