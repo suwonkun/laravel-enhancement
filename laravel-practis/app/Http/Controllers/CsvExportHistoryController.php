@@ -10,7 +10,7 @@ class CsvExportHistoryController extends Controller
 {
     public function index(Request $request)
     {
-        $csvExportHistories = CsvExportHistory::where('user_id', $request->user()->id)->get();
+        $csvExportHistories = CsvExportHistory::where('user_id', $request->user()->id)->simplePaginate(5);
 
         return view('csvExportHistories.index', compact('csvExportHistories'));
     }
