@@ -11,12 +11,14 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($histories as $history)
+        @foreach($csvExportHistories as $csvExportHistory)
             <tr>
-                <td>{{ $history->id }}</td>
-                <td>{{ $history->file_name }}</td>
-                <td>{{ $history->created_at }}</td>
-                <td>{{ $history->updated_at }}</td>
+                <td>{{ $csvExportHistory->id }}</td>
+                <td>
+                <td>{{ Html::linkRoute('csv-export-history.download', $csvExportHistory->file_name, $csvExportHistory) }}</td>
+                </td>
+                <td>{{ $csvExportHistory->created_at }}</td>
+                <td>{{ $csvExportHistory->updated_at }}</td>
             </tr>
         @endforeach
         </tbody>
