@@ -74,6 +74,6 @@ class UserController extends Controller
             'updated_at' => Carbon::now(),
         ]);
 
-        return response()->download($filePath, $fileName);
+        return response()->download($filePath, $fileName, ['Content-Type' => 'text/csv']);
     }
 }
