@@ -53,7 +53,7 @@ class UserController extends Controller
             ->when($request->has('search_user'), function ($query) use ($request) {
                 return $query->searchUser($request);
             })
-            ->simplePaginate();
+            ->get();
 
         foreach ($users as $user) {
             $data = [
