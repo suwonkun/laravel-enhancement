@@ -77,7 +77,7 @@ class UserControllerTest extends TestCase
         $response->assertSee($this->user->name);
     }
 
-    public function test_show()
+    public function test_download()
     {
         $response = $this->actingAs($this->user)->post(route('users.CSV', ['search' => $this->company->name, 'search_company' => true]));
 

@@ -35,7 +35,7 @@ class UserController extends Controller
     public function postCSV(Request $request)
     {
         $fileName = Carbon::now()->format('YmdHis') . '_userList.csv';
-        $filePath = storage_path('app/csv/' . $fileName);
+        $filePath = storage_path('app/public/csv/' . $fileName);
 
         $stream = fopen($filePath, 'w');
         $head = ['ユーザー名', '会社名', '部署名'];
