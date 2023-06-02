@@ -4,11 +4,15 @@
             {{ __('Companies') }}
         </h2>
     </x-slot>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            {{ Html::linkRoute('companies.create', '新規作成') }}
-        </div>
+
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        {{ Html::linkRoute('companies.create', '新規作成') }}
+        <form method="POST" action="{{ route('companies.export') }}">
+            @csrf
+            <button type="submit" class="button">ダウンロード</button>
+        </form>
     </div>
+
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
