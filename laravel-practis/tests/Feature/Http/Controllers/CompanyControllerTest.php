@@ -159,4 +159,13 @@ class CompanyControllerTest extends TestCase
             'id' => $company->id,
         ]);
     }
+
+    public function test_export()
+    {
+        $response = $this->actingAs($this->user)->post(route('companies.export'));
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+    }
+
 }
