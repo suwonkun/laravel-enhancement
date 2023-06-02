@@ -138,4 +138,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Section::class);
     }
+
+    public function csvExportHistories()
+    {
+        return $this->hasMany(CsvExportHistory::class);
+    }
 }
