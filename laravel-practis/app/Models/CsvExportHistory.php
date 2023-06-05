@@ -20,8 +20,5 @@ class CsvExportHistory extends Model
         'file_path',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo('App\Models\User');
-    }
+
 }
