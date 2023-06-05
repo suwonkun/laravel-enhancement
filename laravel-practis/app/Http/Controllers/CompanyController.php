@@ -87,7 +87,7 @@ class CompanyController extends Controller
 
     public function export()
     {
-        $fileName = Carbon::now()->format('YmdHis') . '_userList.csv';
+        $fileName = Carbon::now()->format('YmdHis') . '_companyList.csv';
         $filePath = storage_path('app/csv/' . $fileName);
 
         $stream = fopen($filePath, 'w');
