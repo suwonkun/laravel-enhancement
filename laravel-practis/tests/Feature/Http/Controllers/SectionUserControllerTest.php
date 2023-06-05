@@ -47,4 +47,14 @@ class SectionUserControllerTest extends TestCase
 
         $response->assertStatus(302);
     }
+
+    public function test_download()
+    {
+        $this->section->users()->attach($this->user->id);
+
+        $response = $this->actingAs($this->user)->post(route('section.download', ['sections' => $this->user->company->sections, 'user' => $this->user]));
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+    }
 }
