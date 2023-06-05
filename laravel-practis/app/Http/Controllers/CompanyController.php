@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 
@@ -82,5 +83,32 @@ class CompanyController extends Controller
         $company->delete();
 
         return redirect()->route('companies.index');
+    }
+
+    public function export()
+    {
+        $fileName = Carbon::now()->format('YmdHis') . '_userList.csv';
+        $filePath = storage_path('app/csv/' . $fileName);
+
+        $stream = fopen($filePath, 'w');
+        $head = ['ユーザー名', '会社名', '部署名'];
+        fputcsv($stream, $head);
+
+        $companies = Company::all();
+
+        foreach ($companies as $company) {
+            $data = [
+                $company->id,
+                $company->name,
+                $company->sections_count,
+                $company->created_at,
+                $company->updated_at,
+            ];
+            fputcsv($stream, $data);
+        }
+
+        fclose($stream);
+
+        return response()->download($filePath, $fileName, ['Content-Type' => 'text/csv']);
     }
 }
