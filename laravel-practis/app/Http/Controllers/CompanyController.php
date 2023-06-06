@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
+use App\Models\CsvExportHistory;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
@@ -85,9 +87,9 @@ class CompanyController extends Controller
         return redirect()->route('companies.index');
     }
 
-    public function export()
+    public function export(Request $request)
     {
-        $fileName = Carbon::now()->format('YmdHis') . '_userList.csv';
+        $fileName = Carbon::now()->format('YmdHis') . '_companyList.csv';
         $filePath = storage_path('app/csv/' . $fileName);
 
         $stream = fopen($filePath, 'w');
@@ -106,6 +108,15 @@ class CompanyController extends Controller
             ];
             fputcsv($stream, $data);
         }
+
+        CsvExportHistory::create([
+            'user_id' => $request->user()->id,
+            'file_name' => $fileName,
+            'file_path' => $filePath,
+            'file_type' => 'company',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
 
         fclose($stream);
 

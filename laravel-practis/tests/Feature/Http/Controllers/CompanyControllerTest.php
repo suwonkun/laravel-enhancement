@@ -164,6 +164,12 @@ class CompanyControllerTest extends TestCase
     {
         $response = $this->actingAs($this->user)->post(route('companies.export'));
 
+
+        $csvExportHistory = $this->user->csvExportHistories()->latest()->first();
+        $filename = $response->getFile()->getFilename();
+
+        $this->assertEquals($csvExportHistory->file_name, $filename);
+
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
     }
