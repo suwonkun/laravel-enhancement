@@ -6,6 +6,8 @@ use App\Http\Requests\StoreSectionRequest;
 use App\Http\Requests\UpdateSectionRequest;
 use App\Models\Company;
 use App\Models\Section;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class SectionController extends Controller
 {
@@ -85,5 +87,31 @@ class SectionController extends Controller
         $section->delete();
 
         return redirect()->route('companies.sections.index', compact('company'));
+    }
+
+    public function download(Request $request)
+    {
+        $fileName = Carbon::now()->format('YmdHis') . '_sectionList.csv';
+        $filePath = storage_path('app/csv/' . $fileName);
+
+        $stream = fopen($filePath, 'w');
+        $head = ['部署ID', '部署名', '作成日', '更新日'];
+        fputcsv($stream, $head);
+
+        $sections = $request->user()->company->sections;
+
+        foreach ($sections as $section) {
+            $data = [
+                $section->id,
+                $section->name,
+                $section->created_at,
+                $section->updated_at,
+            ];
+            fputcsv($stream, $data);
+        }
+
+        fclose($stream);
+
+        return response()->download($filePath, $fileName, ['Content-Type' => 'text/csv']);
     }
 }

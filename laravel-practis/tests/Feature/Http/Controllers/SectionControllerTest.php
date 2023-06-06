@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Section;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -19,6 +20,9 @@ class SectionControllerTest extends TestCase
 
         $this->company = Company::factory()->create();
         $this->user = User::factory([
+            'company_id' => $this->company->id,
+        ])->create();
+        $this->section = Section::factory([
             'company_id' => $this->company->id,
         ])->create();
     }
@@ -136,5 +140,13 @@ class SectionControllerTest extends TestCase
             'id' => $section->id,
             'deleted_at' => null,
         ]);
+    }
+
+    public function test_download()
+    {
+        $response = $this->actingAs($this->user)->post(route('section.download', ['sections' => $this->user->company->sections, 'user' => $this->user]));
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
     }
 }
