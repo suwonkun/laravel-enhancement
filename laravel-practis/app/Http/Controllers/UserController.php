@@ -70,7 +70,7 @@ class UserController extends Controller
             'user_id' => $request->user()->id,
             'file_name' => $fileName,
             'file_path' => $filePath,
-            'file_type' => 'user',
+            'csv_type' => 'user',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);

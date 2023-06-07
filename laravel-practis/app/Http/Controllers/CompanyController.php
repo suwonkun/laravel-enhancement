@@ -113,7 +113,7 @@ class CompanyController extends Controller
             'user_id' => $request->user()->id,
             'file_name' => $fileName,
             'file_path' => $filePath,
-            'file_type' => 'company',
+            'csv_type' => 'company',
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
