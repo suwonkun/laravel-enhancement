@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreSectionRequest;
 use App\Http\Requests\UpdateSectionRequest;
 use App\Models\Company;
+use App\Models\CsvExportHistory;
 use App\Models\Section;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -109,6 +110,15 @@ class SectionController extends Controller
             ];
             fputcsv($stream, $data);
         }
+
+        CsvExportHistory::create([
+            'user_id' => $request->user()->id,
+            'file_name' => $fileName,
+            'file_path' => $filePath,
+            'file_type' => 'section',
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
 
         fclose($stream);
 
