@@ -14,6 +14,7 @@
         @foreach($csvExportHistories as $csvExportHistory)
             <tr>
                 <td>{{ $csvExportHistory->id }}</td>
+                <td>{{ $csvExportHistory->csv_type }}</td>
                 <td>{{ Html::linkRoute('csv-export-history.download', $csvExportHistory->file_name, $csvExportHistory) }}</td>
                 <td>{{ $csvExportHistory->created_at }}</td>
                 <td>{{ $csvExportHistory->updated_at }}</td>

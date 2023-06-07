@@ -18,6 +18,7 @@ class CsvExportHistory extends Model
         'user_id',
         'file_name',
         'file_path',
+        'csv_type',
     ];
 
 

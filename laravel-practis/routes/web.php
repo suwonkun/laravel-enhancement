@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('companies', CompanyController::class);
     Route::post('companies/export', [CompanyController::class, 'export'])->name('companies.export');
     Route::resource('companies.sections', \App\Http\Controllers\SectionController::class);
+    Route::post('sections/download', [\App\Http\Controllers\SectionController::class, 'download'])->name('section.download');
     Route::resource('sections.users', \App\Http\Controllers\SectionUserController::class)->only(['store', 'destroy']);
 
     Route::get('/csv-export-histories', [CsvExportHistoryController::class, 'index'])->name('csvExportHistories.index');

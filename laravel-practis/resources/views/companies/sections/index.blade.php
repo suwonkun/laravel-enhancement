@@ -7,6 +7,10 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             {{ Html::linkRoute('companies.sections.create', '新規作成', compact('company')) }}
+            <form method="POST" action="{{ route('section.download') }}">
+                @csrf
+                <button type="submit" class="button">ダウンロード</button>
+            </form>
         </div>
     </div>
 
